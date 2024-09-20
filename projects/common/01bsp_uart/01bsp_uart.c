@@ -26,7 +26,9 @@ TeraTerm):
 //=========================== defines =========================================
 
 #define SCTIMER_PERIOD     0xffff // 0xffff@32kHz = 2s
-uint8_t stringToSend[]       = "Hello, World!\r\n";
+uint8_t stringToSend[255]       = "Hello, World!\r\n";
+uint8_t stringToReceive[255];
+uint8_t stringToReceiveIndex = 0;
 
 //=========================== variables =======================================
 
@@ -109,6 +111,15 @@ uint8_t cb_uartRxCb(void) {
    
    // read received byte
    byte = uart_readByte();
+
+   if (byte!='\r') {
+      stringToReceive[stringToReceiveIndex] = byte;
+      stringToReceiveIndex++;
+   } else {
+      stringToReceive[stringToReceiveIndex] = '\0';
+      stringToReceiveIndex = 0;
+      memcpy(stringToSend, stringToReceive, 255);
+   }
    
    // echo that byte over serial
    uart_writeByte(byte);
