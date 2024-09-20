@@ -21,7 +21,7 @@ The sctimer is periodic, of period SCTIMER_PERIOD ticks. Each time it elapses:
 
 //=========================== defines =========================================
 
-#define SCTIMER_PERIOD     32768 // @32kHz = 1s
+#define SCTIMER_PERIOD     32768/2 // @32kHz = 1s
 
 //=========================== variables =======================================
 
@@ -65,6 +65,16 @@ void cb_compare(void) {
    
    // increment counter
    app_vars.num_compare++;
+
+   if (app_vars.num_compare % 2 == 0) {
+      leds_sync_toggle();
+   } 
+   if (app_vars.num_compare % 3 == 0) {
+      leds_radio_toggle();
+   } 
+   if (app_vars.num_compare % 4 == 0) {
+      leds_debug_toggle();
+   }
    
    // schedule again
    sctimer_setCompare(sctimer_readCounter()+SCTIMER_PERIOD);
